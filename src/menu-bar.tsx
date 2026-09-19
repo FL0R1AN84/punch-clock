@@ -67,18 +67,18 @@ export default function Command() {
   const isRunning = state.running;
 
   let icon: MenuBarExtra.Props["icon"] = Icon.Clock;
-  let title: string;
 
   if (!isRunning) {
     icon = { source: Icon.Pause, tintColor: Color.Yellow };
-    title = `Paused · ${formatDuration(remainingMs)}`;
   } else if (isOvertime) {
     icon = { source: Icon.ExclamationMark, tintColor: Color.Red };
-    title = `+${formatDuration(remainingMs).replace("-", "")} over`;
   } else {
     icon = { source: Icon.Clock, tintColor: Color.Green };
-    title = formatDuration(remainingMs);
   }
+
+  // Always the same fixed-width string (state is conveyed via the icon instead), so the
+  // title never resizes and the rest of the menu bar doesn't jitter.
+  const title = formatDuration(remainingMs);
 
   return (
     <MenuBarExtra icon={icon} title={title} isLoading={isLoading}>
