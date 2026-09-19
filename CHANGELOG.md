@@ -1,6 +1,6 @@
 # Punch Clock Changelog
 
-## [Fix menu bar title jitter] - 2026-09-20
+## [Fix menu bar title jitter] - {PR_MERGE_DATE}
 
 - Fix the menu bar countdown resizing every second, which could shift or close other menu bar items
 
