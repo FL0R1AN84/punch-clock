@@ -1,4 +1,5 @@
 import { LocalStorage } from "@raycast/api";
+import { isValidTimestamp, resolveTimerEndTime } from "./duration";
 
 export const STORAGE_KEY = "punch-clock-state";
 
@@ -28,15 +29,15 @@ function normalizeState(value: unknown): TimerState | undefined {
   if (
     !isFiniteNumber(candidate.totalMinutes) ||
     !isFiniteNumber(candidate.breakMinutes) ||
-    !isFiniteNumber(candidate.startTime) ||
-    !isFiniteNumber(candidate.endTime)
+    !isValidTimestamp(candidate.startTime) ||
+    !isValidTimestamp(candidate.endTime)
   ) {
     return undefined;
   }
 
   const stoppedTime =
-    candidate.stoppedTime === null ? null : isFiniteNumber(candidate.stoppedTime) ? candidate.stoppedTime : undefined;
-  // stoppedTime must be either null or a finite number; anything else (e.g.
+    candidate.stoppedTime === null ? null : isValidTimestamp(candidate.stoppedTime) ? candidate.stoppedTime : undefined;
+  // stoppedTime must be either null or a valid timestamp; anything else (e.g.
   // a stringified value from corrupted storage) makes the state untrustworthy.
   if (stoppedTime === undefined && candidate.stoppedTime !== undefined) return undefined;
 
@@ -81,7 +82,7 @@ export async function clearState(): Promise<void> {
 
 export async function startTimer(totalMinutes: number, breakMinutes: number): Promise<TimerState> {
   const startTime = Date.now();
-  const endTime = startTime + (totalMinutes + breakMinutes) * 60_000;
+  const endTime = resolveTimerEndTime(startTime, totalMinutes, breakMinutes);
   const state: TimerState = {
     totalMinutes,
     breakMinutes,
@@ -134,14 +135,4 @@ export function formatDuration(ms: number): string {
   const seconds = abs % 60;
   const text = `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   return negative ? `-${text}` : text;
-}
-
-/** Formats a duration (ms) as e.g. "1h 30m", used for input summaries. */
-export function formatDurationShort(ms: number): string {
-  const totalMinutes = Math.round(ms / 60_000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours === 0) return `${minutes}m`;
-  if (minutes === 0) return `${hours}h`;
-  return `${hours}h ${minutes}m`;
 }
