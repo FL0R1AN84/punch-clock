@@ -128,14 +128,14 @@ export function formatClock(date: number | Date): string {
   return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-// Fullwidth digit forms (U+FF10-FF19) render at a constant advance width in the macOS menu
-// bar font, unlike regular ASCII digits which are proportionally spaced and visibly change
-// the title's width every second as the digits change. These are BMP code points (no surrogate
-// pairs), so plain string ops (replace/length/etc.) stay safe - unlike U+1D7F6-series monospace
-// digits, which are supplementary-plane and previously broke rendering when combined with naive
-// indexing elsewhere.
+// Mathematical monospace digit forms (U+1D7F6-1D7FF) render at a constant, normal-width advance
+// in the macOS menu bar font, unlike regular ASCII digits which are proportionally spaced and
+// visibly change the title's width every second as the digits change. Fullwidth forms (U+FF10-19)
+// were tried first but render far too wide/spaced out. These monospace digits are supplementary-
+// plane (surrogate pairs), built here via String.fromCodePoint (never sliced by index elsewhere),
+// so they stay safe.
 function toFixedWidthDigits(text: string): string {
-  return text.replace(/[0-9]/g, (d) => String.fromCharCode(0xff10 + Number(d)));
+  return text.replace(/[0-9]/g, (d) => String.fromCodePoint(0x1d7f6 + Number(d)));
 }
 
 /**
