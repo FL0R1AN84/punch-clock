@@ -1,13 +1,14 @@
+import { Color, Icon, launchCommand, LaunchType, MenuBarExtra } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { Icon, MenuBarExtra, launchCommand, LaunchType, Color } from "@raycast/api";
 import {
-  getState,
-  stopTimer,
-  resumeTimer,
   clearState,
-  getRemainingMs,
   formatClock,
   formatDuration,
+  getRemainingMs,
+  getState,
+  markMenuBarSeen,
+  resumeTimer,
+  stopTimer,
   TimerState,
 } from "./timer";
 
@@ -19,6 +20,7 @@ export default function Command() {
   // Load the persisted timer state once on mount (and whenever Raycast
   // re-invokes this menu-bar command on its refresh interval).
   useEffect(() => {
+    void markMenuBarSeen();
     getState()
       .then(setState)
       .finally(() => setIsLoading(false));

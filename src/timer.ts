@@ -1,6 +1,9 @@
 import { LocalStorage } from "@raycast/api";
 
 export const STORAGE_KEY = "punch-clock-state";
+// Set by the menu-bar command on mount, so other commands can tell whether it has ever actually run
+// (i.e. whether it's enabled/added to the menu bar) rather than just being installed.
+const MENU_BAR_SEEN_KEY = "punch-clock-menu-bar-seen";
 
 export interface TimerState {
   /** Total working time in minutes, as entered by the user (excludes break). */
@@ -144,4 +147,14 @@ export function formatDurationShort(ms: number): string {
   if (hours === 0) return `${minutes}m`;
   if (minutes === 0) return `${hours}h`;
   return `${hours}h ${minutes}m`;
+}
+
+/** Marks that the menu-bar command has actually run, meaning it's enabled/added to the menu bar. */
+export async function markMenuBarSeen(): Promise<void> {
+  await LocalStorage.setItem(MENU_BAR_SEEN_KEY, "true");
+}
+
+/** Whether the menu-bar command has ever run, used to detect if it still needs to be enabled. */
+export async function hasMenuBarBeenSeen(): Promise<boolean> {
+  return (await LocalStorage.getItem<string>(MENU_BAR_SEEN_KEY)) === "true";
 }
