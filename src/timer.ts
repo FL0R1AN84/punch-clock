@@ -128,31 +128,15 @@ export function formatClock(date: number | Date): string {
   return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-// Fullwidth digit forms (U+FF10-FF19) render at a constant advance width in the macOS menu
-// bar font, unlike regular ASCII digits which are proportionally spaced and visibly change
-// the title's width every second as the digits change. These are BMP code points (no surrogate
-// pairs), so plain string ops (replace/length/etc.) stay safe - unlike U+1D7F6-series monospace
-// digits, which are supplementary-plane and previously broke rendering when combined with naive
-// indexing elsewhere.
-function toFixedWidthDigits(text: string): string {
-  return text.replace(/[0-9]/g, (d) => String.fromCharCode(0xff10 + Number(d)));
-}
-
-/**
- * Formats a duration (ms) as a fixed-width " HH:MM:SS" / "-HH:MM:SS" string (always 9 characters,
- * with fixed-width digit glyphs). The constant width keeps the menu bar title from resizing every
- * tick, which would otherwise make the whole menu bar jitter (and can even push other menu bar
- * items' popovers closed).
- */
+/** Formats a duration (ms) as H:MM:SS, or -H:MM:SS if negative. */
 export function formatDuration(ms: number): string {
   const abs = ms >= 0 ? Math.ceil(ms / 1000) : Math.floor(-ms / 1000);
   const negative = ms < 0 && abs > 0;
   const hours = Math.floor(abs / 3600);
   const minutes = Math.floor((abs % 3600) / 60);
   const seconds = abs % 60;
-  const sign = negative ? "-" : " ";
-  const digits = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  return `${sign}${toFixedWidthDigits(digits)}`;
+  const text = `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  return negative ? `-${text}` : text;
 }
 
 /** Formats a duration (ms) as e.g. "1h 30m", used for input summaries. */
