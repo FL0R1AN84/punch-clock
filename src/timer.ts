@@ -128,21 +128,11 @@ export function formatClock(date: number | Date): string {
   return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-// Mathematical monospace digit forms (U+1D7F6-1D7FF) render at a constant, normal-width advance
-// in the macOS menu bar font, unlike regular ASCII digits which are proportionally spaced and
-// visibly change the title's width every second as the digits change. Fullwidth forms (U+FF10-19)
-// were tried first but render far too wide/spaced out. These monospace digits are supplementary-
-// plane (surrogate pairs), built here via String.fromCodePoint (never sliced by index elsewhere),
-// so they stay safe.
-function toFixedWidthDigits(text: string): string {
-  return text.replace(/[0-9]/g, (d) => String.fromCodePoint(0x1d7f6 + Number(d)));
-}
-
 /**
  * Formats a duration (ms) as a fixed-width " HH:MM:SS" / "-HH:MM:SS" string (always 9 characters,
- * with fixed-width digit glyphs). The constant width keeps the menu bar title from resizing every
- * tick, which would otherwise make the whole menu bar jitter (and can even push other menu bar
- * items' popovers closed).
+ * with plain ASCII digits). The constant character count keeps the menu bar title from resizing
+ * every tick, which would otherwise make the whole menu bar jitter (and can even push other menu
+ * bar items' popovers closed).
  */
 export function formatDuration(ms: number): string {
   const abs = ms >= 0 ? Math.ceil(ms / 1000) : Math.floor(-ms / 1000);
@@ -151,8 +141,7 @@ export function formatDuration(ms: number): string {
   const minutes = Math.floor((abs % 3600) / 60);
   const seconds = abs % 60;
   const sign = negative ? "-" : " ";
-  const digits = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  return `${sign}${toFixedWidthDigits(digits)}`;
+  return `${sign}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 /** Formats a duration (ms) as e.g. "1h 30m", used for input summaries. */
