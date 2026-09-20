@@ -1,4 +1,14 @@
-import { Alert, Color, confirmAlert, Icon, launchCommand, LaunchType, MenuBarExtra, showToast, Toast } from "@raycast/api";
+import {
+  Alert,
+  Color,
+  confirmAlert,
+  Icon,
+  launchCommand,
+  LaunchType,
+  MenuBarExtra,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { useEffect, useState } from "react";
 import {
   clearState,
