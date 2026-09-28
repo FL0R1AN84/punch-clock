@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "npm: dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "npm: build",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run build"
+    }
+  ]
+}
