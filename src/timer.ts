@@ -140,21 +140,13 @@ export function formatDuration(ms: number): string {
   return negative ? `-${text}` : text;
 }
 
-/** Formats a duration (ms) as e.g. "1h 30m", used for input summaries. */
-export function formatDurationShort(ms: number): string {
-  const totalMinutes = Math.round(ms / 60_000);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  if (hours === 0) return `${minutes}m`;
-  if (minutes === 0) return `${hours}h`;
-  return `${hours}h ${minutes}m`;
-}
-
 /** Marks that the menu-bar command has actually run, meaning it's enabled/added to the menu bar. */
 export async function markMenuBarSeen(): Promise<void> {
   await LocalStorage.setItem(MENU_BAR_SEEN_KEY, "true");
 }
 
+// Once set this never resets, so this is only a one-time nudge: if the menu-bar
+// command is later removed from the menu bar, this won't detect that and warn again.
 /** Whether the menu-bar command has ever run, used to detect if it still needs to be enabled. */
 export async function hasMenuBarBeenSeen(): Promise<boolean> {
   return (await LocalStorage.getItem<string>(MENU_BAR_SEEN_KEY)) === "true";
