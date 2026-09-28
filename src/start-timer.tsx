@@ -96,9 +96,6 @@ export default function StartTimer() {
             message: `Ends around ${formatClock(state.endTime)}`,
           });
         } else {
-          // The menu-bar command has never run, so it's very likely not enabled yet and the
-          // countdown won't be visible anywhere. Block with an alert instead of a toast that
-          // could be missed or auto-dismiss before the user notices.
           await confirmAlert({
             title: "Enable the Menu Bar to See Your Timer",
             message: `Timer started, ends around ${formatClock(state.endTime)}. Enable "Work Timer" in your menu bar to see the countdown.`,
